@@ -70,6 +70,17 @@ openssl req -new -key staging.key \
   -out staging.csr \
   -subj "/CN=staging.service.cloud"
 ```
+This creates a certificate signing request (CSR) for `staging.service.cloud`, using the existing private key `staging.key`.
+
+- `req -new`: creates a new CSR.
+- `-key staging.key`: reads the private key and signs the request with it.
+- `-out staging.csr`: saves the request to `staging.csr`.
+- `-subj "/CN=staging.service.cloud"`: sets the request’s Common Name to that hostname.
+
+The CSR contains the **public key and requested identity**, but not the private key. You give it to a certificate authority to issue a certificate.
+
+This command does **not** create a certificate or add a Subject Alternative Name (SAN). When signing it, update your earlier `server.ext` to use `DNS:staging.service.cloud` so modern TLS clients can validate that hostname.
+
 
 ### Stage 6:
 Creates a certificate signing request (CSR) containing the server’s public key and the Common Name `staging.service.cloud`. The request is signed with `staging.key` to prove possession of the corresponding private key; it does not contain that private key.
