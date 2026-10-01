@@ -54,24 +54,6 @@ These extensions describe the server certificate’s identity and permitted uses
 
 
 ### Stage 4:
-Create and sign the staging certificate:
-```
-openssl genrsa -out staging.key 2048
-
-openssl req -new -key staging.key \
-  -out staging.csr \
-  -subj "/CN=staging.service.cloud"
-
-openssl x509 -req -sha256 -days 90 \
-  -in staging.csr \
-  -CA internal-root-ca.crt \
-  -CAkey internal-root-ca.key \
-  -CAcreateserial \
-  -out staging.crt \
-  -extfile server.ext
-```
-
-### Stage 5:
 Generate the staging server’s private key, request a certificate, and sign it using your internal CA.
 
 ```sh
@@ -80,6 +62,7 @@ openssl genrsa -out staging.key 2048
 
 Creates a 2048-bit RSA private key in `staging.key`. Unlike your CA key, this key is not encrypted with a passphrase, so the server can load it automatically. Protect it with restrictive file permissions.
 
+### Stage 5:
 ```sh
 openssl req -new -key staging.key \
   -out staging.csr \
@@ -113,7 +96,7 @@ Configure the staging server with `staging.crt` and `staging.key`. Clients must 
 
 
 ### Stage 7:
-Then install `internal-root-ca.crt` into each managed client’s trust store:
+Install `internal-root-ca.crt` into each managed client’s trust store:
 
 - Debian/Ubuntu: copy it to `/usr/local/share/ca-certificates/internal-root-ca.crt`, then run `sudo update-ca-certificates`.
 
@@ -147,17 +130,6 @@ Look for:
 
 ```text
 Verify return code: 0 (ok)
-```
-
-This command does not check that the certificate matches the hostname. For hostname validation and to stop on certificate verification errors, use:
-
-```sh
-openssl s_client \
-  -connect staging.service.cloud:443 \
-  -servername staging.service.cloud \
-  -CAfile internal-root-ca.crt \
-  -verify_hostname staging.service.cloud \
-  -verify_return_error
 ```
 
 To test the installed system trust store instead, omit `-CAfile`; OpenSSL will use its default trust locations.
