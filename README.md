@@ -1,15 +1,17 @@
-Create a **private key and a self-signed root certificate** for an internal certificate authority (CA).
+
 
 ### Stage 1:
+Create a private key for an internal certificate authority (CA).
 ```sh
 openssl genrsa -aes256 -out internal-root-ca.key 4096
 ```
 
-- Generates a **4096-bit RSA private key**.
+- Generates a 4096-bit RSA private key.
 - Encrypts the key file with **AES-256**, protected by a passphrase OpenSSL prompts you to enter.
 - Saves it as `internal-root-ca.key`.
 
 ### Stage 2:
+Create a self-signed root certificate for an internal certificate authority (CA).
 ```sh
 openssl req -x509 -new -sha256 -days 3650 \
   -key internal-root-ca.key \
