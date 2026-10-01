@@ -33,7 +33,7 @@ A root CA setup should explicitly configure that extension and appropriate key u
 ### Stage 3:
 Generate server.txt:
 ```sh
-subjectAltName = DNS:staging.duale.cloud
+subjectAltName = DNS:staging.service.cloud
 keyUsage = critical, digitalSignature, keyEncipherment
 extendedKeyUsage = serverAuth
 ```
