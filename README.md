@@ -1,3 +1,6 @@
+![cert_workflow](assets/workflow.png)
+
+
 ## Stage 1:
 Create a private key for an internal certificate authority (CA).
 ```sh
