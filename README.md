@@ -1,5 +1,49 @@
 ![cert_workflow](assets/workflow.png)
 
+## Rust CLI
+
+The `rscert` CLI runs stages 1–6 below and verifies the resulting server
+certificate against the new CA, including its hostname and TLS server purpose.
+It requires Rust to build and OpenSSL 1.1.1 or newer on the server's `PATH`.
+The compiled executable has no Rust package dependencies.
+
+```sh
+cargo build --release
+./target/release/rscert --hostname staging.service.cloud --out-dir certs
+```
+
+OpenSSL prompts for the CA passphrase when creating the key, creating the root
+certificate, and signing the server certificate. Enter the same passphrase each
+time. For unattended operation, supply a protected file whose first line contains
+the passphrase:
+
+```sh
+./target/release/rscert --hostname staging.service.cloud \
+  --out-dir certs --passphrase-file /secure/path/ca-passphrase
+```
+
+Protect the passphrase file with mode `0600`. Its contents are not passed on the
+command line. Run `rscert --help` for CA name and certificate validity options.
+Defaults follow the commands below: a 4096-bit encrypted RSA CA key, 3650-day
+root certificate, 2048-bit unencrypted RSA server key, and 90-day server certificate.
+The CLI explicitly sets critical CA constraints and signing key usage, and adds
+the server DNS SAN and TLS usage extensions. DNS hostnames are supported; IP
+addresses and wildcard names are not.
+
+The output directory's parent must exist, and the output directory must be new.
+On Unix it is created with mode `0700`, and private keys have mode `0600`.
+It contains `internal-root-ca.key`, `internal-root-ca.crt`, `staging.key`,
+`staging.crt`, plus `staging.csr`, `server.ext`, and `internal-root-ca.srl`.
+The server filenames remain `staging.*` regardless of hostname. Each invocation
+creates a new CA; this CLI does not renew certificates using an existing CA.
+If generation fails, partial output is retained for inspection; retry with a
+new output directory.
+
+Deploy `staging.key` and `staging.crt` to your TLS server, and distribute only
+`internal-root-ca.crt` to clients as described in stage 7. Keep the CA key and
+passphrase protected, preferably off the serving host after provisioning.
+The CLI does not configure a TLS service or modify client trust stores.
+
 
 ## Stage 1:
 Create a private key for an internal certificate authority (CA).

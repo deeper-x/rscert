@@ -1,0 +1,8 @@
+[package]
+name = "rscert"
+version = "0.1.0"
+edition = "2024"
+description = "Generate an internal root CA and a signed TLS server certificate"
+license = "MIT"
+
+[dependencies]
