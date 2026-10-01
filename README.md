@@ -48,7 +48,7 @@ Description:
 - `extendedKeyUsage = serverAuth`
   Declares that the certificate is intended to authenticate a TLS server.
 
-These extensions describe the server certificate’s identity and permitted uses. Clients still need to trust the CA that signs it.
+These extensions describe the server certificate's identity and permitted uses. Clients still need to trust the CA that signs it.
 
 
 ## Stage 4:
