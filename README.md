@@ -7,7 +7,7 @@ openssl genrsa -aes256 -out internal-root-ca.key 4096
 ```
 
 - Generates a 4096-bit RSA private key.
-- Encrypts the key file with **AES-256**, protected by a passphrase OpenSSL prompts you to enter.
+- Encrypts the key file with AES-256, protected by a passphrase OpenSSL prompts you to enter.
 - Saves it as `internal-root-ca.key`.
 
 ### Stage 2:
@@ -19,7 +19,7 @@ openssl req -x509 -new -sha256 -days 3650 \
   -subj "/CN=My Company Internal Root CA"
 ```
 
-- `req -x509 -new`: creates a new **self-signed certificate**, rather than a certificate signing request.
+- `req -x509 -new`: creates a new self-signed certificate, rather than a certificate signing request.
 - `-sha256`: uses SHA-256 when signing the certificate.
 - `-days 3650`: makes the certificate valid for 3,650 days, roughly 10 years.
 - `-key`: uses the private key you just created; you’ll be prompted for its passphrase.
@@ -43,13 +43,13 @@ extendedKeyUsage = serverAuth
 Description:
 `server.ext` defines certificate extensions for a TLS server certificate. OpenSSL can apply them when signing the server’s certificate request.
 
-- **`subjectAltName = DNS:staging.service.cloud`**
+- `subjectAltName = DNS:staging.service.cloud`
   Identifies the hostname the certificate is valid for. Browsers and TLS clients check this field against the hostname they connect to. It covers exactly `staging.service.cloud`.
 
-- **`keyUsage = critical, digitalSignature, keyEncipherment`**
+- `keyUsage = critical, digitalSignature, keyEncipherment`
   Allows the key to create digital signatures and encrypt key material. Signatures are used for authentication in modern TLS; key encipherment supports older RSA key exchange. `critical` means a client must understand and enforce this extension or reject the certificate.
 
-- **`extendedKeyUsage = serverAuth`**
+- `extendedKeyUsage = serverAuth`
   Declares that the certificate is intended to authenticate a TLS server.
 
 These extensions describe the server certificate’s identity and permitted uses. Clients still need to trust the CA that signs it.
@@ -77,9 +77,9 @@ This creates a certificate signing request (CSR) for `staging.service.cloud`, us
 - `-out staging.csr`: saves the request to `staging.csr`.
 - `-subj "/CN=staging.service.cloud"`: sets the request’s Common Name to that hostname.
 
-The CSR contains the **public key and requested identity**, but not the private key. You give it to a certificate authority to issue a certificate.
+The CSR contains the public key and requested identity, but not the private key. You give it to a certificate authority to issue a certificate.
 
-This command does **not** create a certificate or add a Subject Alternative Name (SAN). When signing it, update your earlier `server.ext` to use `DNS:staging.service.cloud` so modern TLS clients can validate that hostname.
+This command does not create a certificate or add a Subject Alternative Name (SAN). When signing it, update your earlier `server.ext` to use `DNS:staging.service.cloud` so modern TLS clients can validate that hostname.
 
 
 ### Stage 6:
@@ -136,7 +136,7 @@ openssl s_client \
 ```
 
 - `-connect`: connects to the staging server on HTTPS port 443.
-- `-servername`: sends the hostname using **SNI**, allowing the server to select the correct certificate.
+- `-servername`: sends the hostname using SNI, allowing the server to select the correct certificate.
 - `-CAfile`: explicitly trusts your root certificate for this test—even if it hasn’t been installed in the system trust store.
 
 Look for:
