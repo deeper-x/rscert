@@ -33,7 +33,7 @@ Note: these commands do not explicitly set CA extensions. Whether the certificat
 A root CA setup should explicitly configure that extension and appropriate key usage, such as `keyCertSign` and `cRLSign`.
 
 ### Stage 3:
-Generate server.txt:
+Generate server.ext:
 ```sh
 subjectAltName = DNS:staging.service.cloud
 keyUsage = critical, digitalSignature, keyEncipherment
