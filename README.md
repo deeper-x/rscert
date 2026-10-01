@@ -1,4 +1,4 @@
-### Stage 1:
+## Stage 1:
 Create a private key for an internal certificate authority (CA).
 ```sh
 openssl genrsa -aes256 -out internal-root-ca.key 4096
@@ -8,7 +8,7 @@ Description:
 - Encrypts the key file with AES-256, protected by a passphrase OpenSSL prompts you to enter.
 - Saves it as `internal-root-ca.key`.
 
-### Stage 2:
+## Stage 2:
 Create a self-signed root certificate for an internal certificate authority (CA).
 ```sh
 openssl req -x509 -new -sha256 -days 3650 \
@@ -30,7 +30,7 @@ Systems that explicitly trust this root certificate can trust certificates issue
 Note: these commands do not explicitly set CA extensions. Whether the certificate includes `basicConstraints = CA:TRUE` depends on your OpenSSL configuration. 
 A root CA setup should explicitly configure that extension and appropriate key usage, such as `keyCertSign` and `cRLSign`.
 
-### Stage 3:
+## Stage 3:
 Generate server.ext, defining certificate extensions for a TLS server certificate. OpenSSL can apply them when signing the server’s certificate request:
 ```sh
 subjectAltName = DNS:staging.service.cloud
@@ -51,13 +51,13 @@ Description:
 These extensions describe the server certificate’s identity and permitted uses. Clients still need to trust the CA that signs it.
 
 
-### Stage 4:
+## Stage 4:
 Creates a 2048-bit RSA private key in `staging.key`. Unlike your CA key, this key is not encrypted with a passphrase, so the server can load it automatically. Protect it with restrictive file permissions.
 ```sh
 openssl genrsa -out staging.key 2048
 ```
 
-### Stage 5:
+## Stage 5:
 Creates a certificate signing request (CSR) containing the server’s public key and the Common Name `staging.service.cloud`. The request is signed with `staging.key` to prove possession of the corresponding private key; it does not contain that private key.
 ```sh
 openssl req -new -key staging.key \
@@ -74,7 +74,7 @@ The CSR contains the public key and requested identity, but not the private key.
 This command does not create a certificate or add a Subject Alternative Name (SAN). When signing it, update your earlier `server.ext` to use `DNS:staging.service.cloud` so modern TLS clients can validate that hostname.
 
 
-### Stage 6:
+## Stage 6:
 Issues the server certificate:
 ```sh
 openssl x509 -req -sha256 -days 90 \
@@ -94,7 +94,7 @@ Description:
 - `-out staging.crt`: saves the signed certificate.
 - `-extfile server.ext`: adds the hostname and TLS server usage extensions you defined earlier.
 
-### Stage 7:
+## Stage 7:
 Install `internal-root-ca.crt` into each managed client’s trust store:
 
 - Debian/Ubuntu: copy it to `/usr/local/share/ca-certificates/internal-root-ca.crt`, then run `sudo update-ca-certificates`.
@@ -111,7 +111,7 @@ sudo update-ca-certificates
 Applications that use the system trust store can then trust your staging certificate. Some applications maintain separate trust stores and need separate configuration.
 
 
-### Stage 8:
+## Stage 8:
 Validate from a trusted client:
 
 ```
