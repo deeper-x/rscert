@@ -33,12 +33,9 @@ A root CA setup should explicitly configure that extension and appropriate key u
 ### Stage 3:
 Generate server.txt:
 ```sh
-openssl genrsa -aes256 -out internal-root-ca.key 4096
-
-openssl req -x509 -new -sha256 -days 3650 \
-  -key internal-root-ca.key \
-  -out internal-root-ca.crt \
-  -subj "/CN=My Company Internal Root CA"
+subjectAltName = DNS:staging.duale.cloud
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
 ```
 
 Description:
